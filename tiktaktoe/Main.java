@@ -1,8 +1,12 @@
 import controllers.GameController;
 import models.Game;
+import models.GameState;
 import models.Player;
 import models.Symbol;
-import strategies.WinningStrategy.WinniingStrategy;
+import strategies.WinningStrategy.ColumnWinningStrategy;
+import strategies.WinningStrategy.DiagonalWinningStrategy;
+import strategies.WinningStrategy.RowWinningStrategy;
+import strategies.WinningStrategy.WinningStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +28,29 @@ public class Main {
             scanner.nextLine();
             players.add(new Player(name, new Symbol(symbol), i));
         }
-        List<WinniingStrategy> winniingStrategies= new ArrayList<>();
-        Game game = gameController.startGame(dimensions, players, winniingStrategies);
+        List<WinningStrategy> winningStrategies= List.of(
+                new RowWinningStrategy(),
+                new ColumnWinningStrategy(),
+                new DiagonalWinningStrategy()
+        );
+        Game game = gameController.startGame(dimensions, players, winningStrategies);
+        while(gameController.getGameState(game).equals(GameState.IN_PROGRESS)){
+            gameController.displayBoard(game);
+            System.out.println("Do you want to undo? Press Y for yes");
+            String moveType =scanner.next();
+            if(moveType.equalsIgnoreCase("Y")){
+                gameController.undo(game);
+                continue;
+            }
+            gameController.makeMove(game);
+        }
         gameController.displayBoard(game);
+        System.out.println("Game Finished!");
+        if(gameController.getGameState(game).equals(GameState.ENDED)){
+            System.out.println("Winner is "+ gameController.getWinner(game).getName());
+        }
+        else{
+            System.out.println("Game drawn!");
+        }
     }
 }

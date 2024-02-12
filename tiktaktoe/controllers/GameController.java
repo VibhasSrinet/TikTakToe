@@ -5,17 +5,17 @@ import Exceptions.InvalidNumberOfPlayersException;
 import models.Game;
 import models.Player;
 import models.GameState;
-import strategies.WinningStrategy.WinniingStrategy;
+import strategies.WinningStrategy.WinningStrategy;
 
 import java.util.List;
 
 public class GameController {
-    public Game startGame(int dimensions, List<Player> players, List<WinniingStrategy> winniingStrategies){
+    public Game startGame(int dimensions, List<Player> players, List<WinningStrategy> winningStrategies){
         try{
             return Game.getBuilder()
                     .setDimensions(dimensions)
                     .setPlayers(players)
-                    .setWinniingStrategies(winniingStrategies)
+                    .setWinningStrategies(winningStrategies)
                     .build();
         }
         catch (InvalidNumberOfPlayersException e){
@@ -27,16 +27,21 @@ public class GameController {
         return null;
     }
 
-    public void  makeMove(){
-
+    public void  makeMove(Game game){
+        try{
+            game.makeMove();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
-    public GameState checkState(Game game){
+    public GameState getGameState(Game game){
         return game.getGameState();
     }
 
-    public void undo(){
-
+    public void undo(Game game){
+        game.undo();
     }
 
     public void displayBoard(Game game){
